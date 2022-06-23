@@ -1,5 +1,7 @@
 package gb
 
+import "githun.com/erizzardi/edoboy/util"
+
 // Opcodes for the original gameboy and gameboy color.
 // A full list can be found here:
 // http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf page 65
@@ -19,252 +21,361 @@ var operations = map[byte]func(*GBClassic){
 	//============
 	// 8-bit loads
 	//============
-	// LD B, d8
+	// LD B,d8
 	0x06: func(gb *GBClassic) {
 		value := gb.Fetch()
 		gb.Cpu.BC.SetHigh(value)
 	},
-	// LD C, d8
+	// LD C,d8
 	0x0E: func(gb *GBClassic) {
 		value := gb.Fetch()
 		gb.Cpu.BC.SetLow(value)
 	},
-	// LD D, d8
+	// LD D,d8
 	0x16: func(gb *GBClassic) {
 		value := gb.Fetch()
 		gb.Cpu.DE.SetHigh(value)
 	},
-	// LD E, d8
+	// LD E,d8
 	0x1E: func(gb *GBClassic) {
 		value := gb.Fetch()
 		gb.Cpu.DE.SetLow(value)
 	},
-	// LD D, d8
+	// LD D,d8
 	0x26: func(gb *GBClassic) {
 		value := gb.Fetch()
 		gb.Cpu.HL.SetHigh(value)
 	},
-	// LD E, d8
+	// LD E,d8
 	0x2E: func(gb *GBClassic) {
 		value := gb.Fetch()
 		gb.Cpu.HL.SetLow(value)
 	},
-	// LD A, A
+	// LD A,A
 	0x7F: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.AF.GetHigh())
 	},
-	// LD A, B
+	// LD A,B
 	0x78: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.BC.GetHigh())
 	},
-	// LD A, C
+	// LD A,C
 	0x79: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.BC.GetLow())
 	},
-	// LD A, D
+	// LD A,D
 	0x7A: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.DE.GetHigh())
 	},
-	// LD A, E
+	// LD A,E
 	0x7B: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.DE.GetLow())
 	},
-	// LD A, H
+	// LD A,H
 	0x7C: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.HL.GetHigh())
 	},
-	// LD A, L
+	// LD A,L
 	0x7D: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Cpu.HL.GetLow())
 	},
-	// LD A, (HL)
+	// LD A,(HL)
 	0x7E: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD B, B
+	// LD B,B
 	0x40: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Cpu.BC.GetHigh())
 	},
-	// LD B, C
+	// LD B,C
 	0x41: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Cpu.BC.GetLow())
 	},
-	// LD B, D
+	// LD B,D
 	0x42: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Cpu.DE.GetHigh())
 	},
-	// LD B, E
+	// LD B,E
 	0x43: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Cpu.DE.GetLow())
 	},
-	// LD B, H
+	// LD B,H
 	0x44: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Cpu.HL.GetHigh())
 	},
-	// LD B, L
+	// LD B,L
 	0x45: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Cpu.HL.GetLow())
 	},
-	// LD B, (HL)
+	// LD B,(HL)
 	0x46: func(gb *GBClassic) {
 		gb.Cpu.BC.SetHigh(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD C, B
+	// LD C,B
 	0x48: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Cpu.BC.GetHigh())
 	},
-	// LD C, C
+	// LD C,C
 	0x49: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Cpu.BC.GetLow())
 	},
-	// LD C, D
+	// LD C,D
 	0x4A: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Cpu.DE.GetHigh())
 	},
-	// LD C, E
+	// LD C,E
 	0x4B: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Cpu.DE.GetLow())
 	},
-	// LD C, H
+	// LD C,H
 	0x4C: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Cpu.HL.GetHigh())
 	},
-	// LD C, L
+	// LD C,L
 	0x4D: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Cpu.HL.GetLow())
 	},
-	// LD C, (HL)
+	// LD C,(HL)
 	0x4E: func(gb *GBClassic) {
 		gb.Cpu.BC.SetLow(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD D, B
+	// LD D,B
 	0x50: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Cpu.BC.GetHigh())
 	},
-	// LD D, C
+	// LD D,C
 	0x51: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Cpu.BC.GetLow())
 	},
-	// LD D, D
+	// LD D,D
 	0x52: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Cpu.DE.GetHigh())
 	},
-	// LD D, E
+	// LD D,E
 	0x53: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Cpu.DE.GetLow())
 	},
-	// LD D, H
+	// LD D,H
 	0x54: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Cpu.HL.GetHigh())
 	},
-	// LD D, L
+	// LD D,L
 	0x55: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Cpu.HL.GetLow())
 	},
-	// LD D, (HL)
+	// LD D,(HL)
 	0x56: func(gb *GBClassic) {
 		gb.Cpu.DE.SetHigh(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD E, B
+	// LD E,B
 	0x58: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Cpu.BC.GetHigh())
 	},
-	// LD E, C
+	// LD E,C
 	0x59: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Cpu.BC.GetLow())
 	},
-	// LD E, D
+	// LD E,D
 	0x5A: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Cpu.DE.GetHigh())
 	},
-	// LD E, E
+	// LD E,E
 	0x5B: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Cpu.DE.GetLow())
 	},
-	// LD E, H
+	// LD E,H
 	0x5C: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Cpu.HL.GetHigh())
 	},
-	// LD E, L
+	// LD E,L
 	0x5D: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Cpu.HL.GetLow())
 	},
-	// LD E, (HL)
+	// LD E,(HL)
 	0x5E: func(gb *GBClassic) {
 		gb.Cpu.DE.SetLow(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD H, B
+	// LD H,B
 	0x60: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Cpu.BC.GetHigh())
 	},
-	// LD H, C
+	// LD H,C
 	0x61: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Cpu.BC.GetLow())
 	},
-	// LD H, D
+	// LD H,D
 	0x62: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Cpu.DE.GetHigh())
 	},
-	// LD H, E
+	// LD H,E
 	0x63: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Cpu.DE.GetLow())
 	},
-	// LD H, H
+	// LD H,H
 	0x64: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Cpu.HL.GetHigh())
 	},
-	// LD H, L
+	// LD H,L
 	0x65: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Cpu.HL.GetLow())
 	},
-	// LD H, (HL)
+	// LD H,(HL)
 	0x66: func(gb *GBClassic) {
 		gb.Cpu.HL.SetHigh(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD L, B
+	// LD L,B
 	0x68: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Cpu.BC.GetHigh())
 	},
-	// LD L, C
+	// LD L,C
 	0x69: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Cpu.BC.GetLow())
 	},
-	// LD L, D
+	// LD L,D
 	0x6A: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Cpu.DE.GetHigh())
 	},
-	// LD L, E
+	// LD L,E
 	0x6B: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Cpu.DE.GetLow())
 	},
-	// LD L, H
+	// LD L,H
 	0x6C: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Cpu.HL.GetHigh())
 	},
-	// LD L, L
+	// LD L,L
 	0x6D: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Cpu.HL.GetLow())
 	},
-	// LD L, (HL)
+	// LD L,(HL)
 	0x6E: func(gb *GBClassic) {
 		gb.Cpu.HL.SetLow(gb.Ram.Read(gb.Cpu.HL.Get()))
 	},
-	// LD A, (BC)
+	// LD (HL),B
+	0x70: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.BC.GetHigh())
+	},
+	// LD (HL),C
+	0x71: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.BC.GetLow())
+	},
+	// LD (HL),D
+	0x72: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.DE.GetHigh())
+	},
+	// LD (HL),E
+	0x73: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.DE.GetLow())
+	},
+	// LD (HL),H
+	0x74: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.HL.GetHigh())
+	},
+	// LD (HL),L
+	0x75: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.HL.GetLow())
+	},
+	// LD (HL),d8
+	0x36: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Fetch())
+	},
+	// LD A,(BC)
 	0x0A: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Ram.Read(gb.Cpu.BC.Get()))
 	},
-	// LD A, (DE)
+	// LD A,(DE)
 	0x1A: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Ram.Read(gb.Cpu.DE.Get()))
 	},
-	// LD A, (a16)
+	// LD A,(a16)
 	0xFA: func(gb *GBClassic) {
-		valLow := gb.Fetch()
-		valHigh := gb.Fetch()
-		gb.Cpu.AF.SetHigh(gb.Ram.Read(uint16(valHigh)<<8 | uint16(valLow)))
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Cpu.AF.SetHigh(gb.Ram.Read(util.Join(high, low)))
 	},
-	// LD A, d8
+	// LD A,d8
 	0x3E: func(gb *GBClassic) {
 		gb.Cpu.AF.SetHigh(gb.Fetch())
+	},
+	// LD B,A
+	0x47: func(gb *GBClassic) {
+		gb.Cpu.BC.SetHigh(gb.Cpu.AF.GetHigh())
+	},
+	// LD C,A
+	0x4F: func(gb *GBClassic) {
+		gb.Cpu.BC.SetLow(gb.Cpu.AF.GetHigh())
+	},
+	// LD D,A
+	0x57: func(gb *GBClassic) {
+		gb.Cpu.DE.SetHigh(gb.Cpu.AF.GetHigh())
+	},
+	// LD E,A
+	0x5F: func(gb *GBClassic) {
+		gb.Cpu.DE.SetLow(gb.Cpu.AF.GetHigh())
+	},
+	// LD H,A
+	0x67: func(gb *GBClassic) {
+		gb.Cpu.HL.SetHigh(gb.Cpu.AF.GetHigh())
+	},
+	// LD L,A
+	0x6F: func(gb *GBClassic) {
+		gb.Cpu.HL.SetLow(gb.Cpu.AF.GetHigh())
+	},
+	// LD (BC),A
+	0x02: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.BC.Get(), gb.Cpu.AF.GetHigh())
+	},
+	// LD (DE),A
+	0x12: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.DE.Get(), gb.Cpu.AF.GetHigh())
+	},
+	// LD (HL),A
+	0x77: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.AF.GetHigh())
+	},
+	// LD (a16),A
+	0xEA: func(gb *GBClassic) {
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Ram.Write(util.Join(high, low), gb.Cpu.AF.GetHigh())
+	},
+	// LD A,(C)
+	0xF2: func(gb *GBClassic) {
+		val := gb.Ram.Read(0xFF00 + uint16(gb.Cpu.BC.GetLow()))
+		gb.Cpu.AF.SetHigh(val)
+	},
+	// LD (C),A
+	0xE2: func(gb *GBClassic) {
+		gb.Ram.Write(0xFF00+uint16(gb.Cpu.BC.GetLow()), gb.Cpu.AF.GetHigh())
+	},
+	// LDD A,(HL)
+	0x3A: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Ram.Read(gb.Cpu.HL.Get()))
+		gb.Cpu.HL.Set(gb.Cpu.HL.Get() - 1)
+	},
+	// LDD (HL),A
+	0x32: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.HL.Set(gb.Cpu.HL.Get() - 1)
+	},
+	// LDI A,(HL)
+	0x2A: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Ram.Read(gb.Cpu.HL.Get()))
+		gb.Cpu.HL.Set(gb.Cpu.HL.Get() + 1)
+	},
+	// LDI (HL),A
+	0x22: func(gb *GBClassic) {
+		gb.Ram.Write(gb.Cpu.HL.Get(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.HL.Set(gb.Cpu.HL.Get() + 1)
+	},
+	// LDH (a8),A
+	0xE0: func(gb *GBClassic) {
+		val := gb.Fetch()
+		gb.Ram.Write(0xFF00+uint16(val), gb.Cpu.AF.GetHigh())
+	},
+	// LDH A,(a8)
+	0xF0: func(gb *GBClassic) {
+		val := gb.Fetch()
+		gb.Cpu.AF.SetHigh(gb.Ram.Read(0xFF00 + uint16(val)))
 	},
 }

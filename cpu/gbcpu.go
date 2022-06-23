@@ -1,5 +1,7 @@
 package cpu
 
+import "githun.com/erizzardi/edoboy/util"
+
 // Type representing the 16 bit CPU registers.
 // It contains the two individual 8-bit registers that compose the 16-bit one.
 // More info on registers:
@@ -30,7 +32,7 @@ func (r *GBRegister) GetLow() byte {
 }
 
 func (r *GBRegister) Get() uint16 {
-	return uint16(r.high)<<8 | uint16(r.low)
+	return util.Join(r.high, r.low)
 }
 
 // Type that implements the CPU interface.
