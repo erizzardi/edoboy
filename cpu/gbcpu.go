@@ -1,13 +1,10 @@
 package cpu
 
-// Type representing the CPU registers.
-// I decided to use three distinct values for the 16-bit full register
-// and the two 8-bit physical components. It's easier to write, less error-prone
-// and it costs only 16 bits of memory per register (96 bits in total).
+// Type representing the 16 bit CPU registers.
+// It contains the two individual 8-bit registers that compose the 16-bit one.
 // More info on registers:
 // https://gbdev.io/pandocs/CPU_Registers_and_Flags.html
 type GBRegister struct {
-	sixb      uint16
 	high, low byte
 }
 
@@ -20,7 +17,8 @@ func (r *GBRegister) SetLow(value byte) {
 }
 
 func (r *GBRegister) Set(value uint16) {
-	r.sixb = value
+	r.high = byte(value >> 8)
+	r.low = byte(value)
 }
 
 func (r *GBRegister) GetHigh() byte {
@@ -32,7 +30,7 @@ func (r *GBRegister) GetLow() byte {
 }
 
 func (r *GBRegister) Get() uint16 {
-	return r.sixb
+	return uint16(r.high)<<8 | uint16(r.low)
 }
 
 // Type that implements the CPU interface.
@@ -41,13 +39,15 @@ type GBCpu struct {
 	AF, BC, DE, HL, SP, PC *GBRegister
 }
 
-func NewCpu() Cpu {
+// This returns a new CPU, with the registers initialized
+// to their default value, according to the documentation
+func NewCpu() *GBCpu {
 	return &GBCpu{
-		AF: &GBRegister{},
-		BC: &GBRegister{},
-		DE: &GBRegister{},
-		HL: &GBRegister{},
-		SP: &GBRegister{},
-		PC: &GBRegister{},
+		AF: &GBRegister{high: 0x01, low: 0xB0},
+		BC: &GBRegister{high: 0x00, low: 0x13},
+		DE: &GBRegister{high: 0x00, low: 0xD8},
+		HL: &GBRegister{high: 0x01, low: 0x4D},
+		SP: &GBRegister{high: 0xFF, low: 0xFE},
+		PC: &GBRegister{high: 0x01, low: 0x00},
 	}
 }

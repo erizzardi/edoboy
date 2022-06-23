@@ -10,7 +10,7 @@ type Gameboy interface {
 	// 	- Fetch: fetches the operation from memory
 	// 	- Decode: decodes the operation (opcode) and returns the corresponding function
 	// 	- Execute: executes the operation decoded in the preceeding step
-	Fetch()
+	Fetch() byte
 	Decode()
 	Execute()
 }

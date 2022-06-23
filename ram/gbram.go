@@ -10,7 +10,7 @@ type GBRam struct {
 	deference [0xFFFF]byte // C ftw
 }
 
-func NewGBRam() Ram {
+func NewGBRam() *GBRam {
 	return &GBRam{}
 }
 
