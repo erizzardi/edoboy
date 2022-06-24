@@ -39,6 +39,23 @@ func (r *GBRegister) Get() uint16 {
 // It holds all the registers.
 type GBCpu struct {
 	AF, BC, DE, HL, SP, PC *GBRegister
+	z, n, hc, c            bool
+}
+
+func (cpu *GBCpu) SetZ(val bool) {
+	cpu.z = val
+}
+
+func (cpu *GBCpu) SetN(val bool) {
+	cpu.n = val
+}
+
+func (cpu *GBCpu) SetHC(val bool) {
+	cpu.hc = val
+}
+
+func (cpu *GBCpu) SetC(val bool) {
+	cpu.c = val
 }
 
 // This returns a new CPU, with the registers initialized

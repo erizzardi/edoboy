@@ -1,6 +1,8 @@
 package gb
 
-import "githun.com/erizzardi/edoboy/util"
+import (
+	"githun.com/erizzardi/edoboy/util"
+)
 
 // Opcodes for the original gameboy and gameboy color.
 // A full list can be found here:
@@ -378,4 +380,102 @@ var operations = map[byte]func(*GBClassic){
 		val := gb.Fetch()
 		gb.Cpu.AF.SetHigh(gb.Ram.Read(0xFF00 + uint16(val)))
 	},
+
+	//=============
+	// 16-bit loads
+	//=============
+	//LD BC,d16
+	0x01: func(gb *GBClassic) {
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Cpu.BC.Set(util.Join(high, low))
+	},
+	// LD DE,d16
+	0x11: func(gb *GBClassic) {
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Cpu.DE.Set(util.Join(high, low))
+	},
+	// LD HL,16
+	0x21: func(gb *GBClassic) {
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Cpu.HL.Set(util.Join(high, low))
+	},
+	// LD SP,d16
+	0x31: func(gb *GBClassic) {
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Cpu.SP.Set(util.Join(high, low))
+	},
+	// LD SP,HL
+	0xF9: func(gb *GBClassic) {
+		gb.Cpu.SP.Set(gb.Cpu.HL.Get())
+	},
+	// LDHL SP,s8
+	0xF8: func(gb *GBClassic) {
+		// this operation reads the number as signed
+		val := int16(gb.Fetch())
+		sum := uint16(val + int16(gb.Cpu.SP.Get()))
+		gb.Cpu.HL.Set(sum)
+		// check for C and HC flags
+		innerSum := (val & 0x0F) + (int16(gb.Cpu.SP.Get()) & 0x0F)
+		gb.Cpu.SetZ(false)
+		gb.Cpu.SetN(false)
+		gb.Cpu.SetHC((innerSum & 0x10) == 0x10)
+		gb.Cpu.SetC((innerSum & 0x100) == 0x100)
+
+	},
+	// LD (a16),SP
+	0x08: func(gb *GBClassic) {
+		low := gb.Fetch()
+		high := gb.Fetch()
+		gb.Ram.Write(util.Join(high, low), gb.Cpu.SP.GetLow())
+		gb.Ram.Write(util.Join(high, low)+1, gb.Cpu.SP.GetHigh())
+	},
+	// PUSH AF
+	0xF5: func(gb *GBClassic) {
+		gb.PushStack(gb.Cpu.AF.GetHigh())
+		gb.PushStack(gb.Cpu.AF.GetLow())
+	},
+	// PUSH BC
+	0xC5: func(gb *GBClassic) {
+		gb.PushStack(gb.Cpu.BC.GetHigh())
+		gb.PushStack(gb.Cpu.BC.GetLow())
+	},
+	// PUSH DE
+	0xD5: func(gb *GBClassic) {
+		gb.PushStack(gb.Cpu.DE.GetHigh())
+		gb.PushStack(gb.Cpu.DE.GetLow())
+	},
+	// PUSH HL
+	0xE5: func(gb *GBClassic) {
+		gb.PushStack(gb.Cpu.HL.GetHigh())
+		gb.PushStack(gb.Cpu.HL.GetLow())
+	},
+	// POP AF
+	0xF1: func(gb *GBClassic) {
+		gb.Cpu.AF.SetLow(gb.PopStack())
+		gb.Cpu.AF.SetHigh(gb.PopStack())
+	},
+	// POP BC
+	0xC1: func(gb *GBClassic) {
+		gb.Cpu.BC.SetLow(gb.PopStack())
+		gb.Cpu.BC.SetHigh(gb.PopStack())
+	},
+	// POP DE
+	0xD1: func(gb *GBClassic) {
+		gb.Cpu.DE.SetLow(gb.PopStack())
+		gb.Cpu.DE.SetHigh(gb.PopStack())
+	},
+	// POP HL
+	0xE1: func(gb *GBClassic) {
+		gb.Cpu.HL.SetLow(gb.PopStack())
+		gb.Cpu.HL.SetHigh(gb.PopStack())
+	},
+
+	//==========
+	// 8-bit ALU
+	//==========
+	// ADD A,A
 }

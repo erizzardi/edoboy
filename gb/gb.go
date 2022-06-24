@@ -13,4 +13,8 @@ type Gameboy interface {
 	Fetch() byte
 	Decode()
 	Execute()
+
+	// Miscellanea
+	PopStack() uint8
+	PushStack(uint8)
 }

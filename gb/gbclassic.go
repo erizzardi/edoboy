@@ -31,5 +31,18 @@ func (gb *GBClassic) Fetch() byte {
 	return op
 }
 
-func (gb *GBClassic) Decode()  {}
+func (gb *GBClassic) Decode() {
+
+}
 func (gb *GBClassic) Execute() {}
+
+func (gb *GBClassic) PopStack() uint8 {
+	ret := gb.Ram.Read(gb.Cpu.SP.Get() + 1)
+	gb.Cpu.SP.Set(gb.Cpu.SP.Get() + 1)
+	return ret
+}
+
+func (gb *GBClassic) PushStack(val uint8) {
+	gb.Ram.Write(gb.Cpu.SP.Get()+1, val)
+	gb.Cpu.SP.Set(gb.Cpu.SP.Get() + 1)
+}
