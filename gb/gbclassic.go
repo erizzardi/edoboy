@@ -36,12 +36,20 @@ func (gb *GBClassic) Decode() {
 }
 func (gb *GBClassic) Execute() {}
 
+//============
+// Miscellanea
+//============
+
+// Reads a value from the stack and
+// decreases SP by 1
 func (gb *GBClassic) PopStack() uint8 {
 	ret := gb.Ram.Read(gb.Cpu.SP.Get() + 1)
 	gb.Cpu.SP.Set(gb.Cpu.SP.Get() + 1)
 	return ret
 }
 
+// Writes a value to the stack and
+// increases SP by 1
 func (gb *GBClassic) PushStack(val uint8) {
 	gb.Ram.Write(gb.Cpu.SP.Get()+1, val)
 	gb.Cpu.SP.Set(gb.Cpu.SP.Get() + 1)

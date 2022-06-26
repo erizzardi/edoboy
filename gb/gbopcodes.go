@@ -478,4 +478,133 @@ var operations = map[byte]func(*GBClassic){
 	// 8-bit ALU
 	//==========
 	// ADD A,A
+	// Should work?
+	0x87: func(gb *GBClassic) {
+
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.AF.GetHigh(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,B
+	0x80: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.BC.GetHigh(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,C
+	0x81: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.BC.GetLow(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,D
+	0x82: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.DE.GetHigh(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,E
+	0x83: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.DE.GetLow(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,H
+	0x84: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.HL.GetHigh(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,L
+	0x85: func(gb *GBClassic) {
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(gb.Cpu.HL.GetLow(), gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,(HL)
+	0x86: func(gb *GBClassic) {
+		val := gb.Ram.Read(gb.Cpu.HL.Get())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(val, gb.Cpu.AF.GetHigh()))
+	},
+	// ADD A,d8
+	0xC6: func(gb *GBClassic) {
+		val := gb.Fetch()
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(val, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,A
+	0x8F: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.AF.GetHigh(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,B
+	0x88: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.BC.GetHigh(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,C
+	0x89: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.BC.GetLow(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,D
+	0x8A: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.DE.GetHigh(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,E
+	0x8B: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.DE.GetLow(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,H
+	0x8C: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.HL.GetHigh(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,L
+	0x8D: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Cpu.HL.GetLow(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,(HL)
+	0x8E: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Ram.Read(gb.Cpu.HL.Get()), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// ADC A,d8
+	0xCE: func(gb *GBClassic) {
+		sum := gb.Cpu.Add8Bit(gb.Fetch(), gb.Cpu.GetC())
+		gb.Cpu.AF.SetHigh(gb.Cpu.Add8Bit(sum, gb.Cpu.AF.GetHigh()))
+	},
+	// SUB A
+	0x97: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.AF.GetHigh(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB B
+	0x90: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.BC.GetHigh(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB C
+	0x91: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.BC.GetLow(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB D
+	0x92: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.DE.GetHigh(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB E
+	0x93: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.DE.GetLow(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB H
+	0x94: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.HL.GetHigh(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB L
+	0x95: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Cpu.HL.GetLow(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB (HL)
+	0x96: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Ram.Read(gb.Cpu.HL.Get()), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
+	// SUB d8
+	0xD6: func(gb *GBClassic) {
+		diff := gb.Cpu.Sub8bit(gb.Fetch(), gb.Cpu.AF.GetHigh())
+		gb.Cpu.AF.SetHigh(diff)
+	},
 }

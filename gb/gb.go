@@ -14,7 +14,15 @@ type Gameboy interface {
 	Decode()
 	Execute()
 
+	//============
 	// Miscellanea
+	//============
+
+	// Reads a value from the stack and
+	// decreases SP by 1
 	PopStack() uint8
+
+	// Writes a value to the stack and
+	// increases SP by 1
 	PushStack(uint8)
 }
